@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { Link } from 'dva/router';
 import { NavLink } from 'dva/router';
 import { Layout, Menu, Icon, Drawer } from 'antd';
@@ -8,11 +9,14 @@ import './sass/all.scss';
 import menuConfig from './config/menuConfig.js';
 import { enquireScreen, unenquireScreen } from 'enquire-js';
 import SiderBar from './layout/Sider';
+import isLogin from './hoc/isLogin';
+
 const { Header, Sider, Content } = Layout;
 const SubMenu = Menu.SubMenu;
 let isMobile;
 
-export default class Admin extends React.Component{    
+
+class Admin extends React.Component{    
     
     state = {
         isMobile,
@@ -35,7 +39,13 @@ export default class Admin extends React.Component{
     }
 
     // 是否是手機?
-    componentDidMount() {
+    async componentDidMount() {
+        // const res = await axios.post('/login',{
+        //     email: 'mq',
+        //     password: 'aaaaaa'
+        // })
+        // console.log(res);
+
         this.enquireHandler = enquireScreen(mobile => {
             const { isMobile } = this.state;
             if (isMobile !== mobile) {
@@ -135,3 +145,4 @@ export default class Admin extends React.Component{
     }
   }
   
+  export default isLogin(Admin);
