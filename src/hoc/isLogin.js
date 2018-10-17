@@ -1,4 +1,5 @@
 import React from 'react';
+import { Spin } from 'antd';
 import { connect } from 'dva';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
@@ -24,6 +25,9 @@ function isLogin(Comp){
         render(){
             return(
                 <Aux>
+                    <div id='ajaxLoading' style={{display:'none'}}>
+                        <Spin />
+                    </div> 
                 {  this.state.login === true ?
                     <Comp {...this.props}></Comp>
                     : null

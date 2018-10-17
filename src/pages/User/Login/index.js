@@ -1,5 +1,8 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { Card, Form, Icon, Input, Button, Checkbox, Row, Col, message } from 'antd';
+import axios from 'axios';
+import Axios from '../../../utils/axios';
 import logo from './../../../assets/logo-white.svg';
 import './../index.scss';
 import './index.scss';
@@ -8,13 +11,40 @@ import './index.scss';
 
 // export default class Login extends React.Component {
 class Login extends React.Component {
-
+    state = {
+        iconLoading: false
+    }
     // 送出表單
     handleSubmit = ()=>{
         let userInfo = this.props.form.getFieldsValue();
-        this.props.form.validateFields((err,values)=>{
+        console.log(userInfo);
+        this.props.form.validateFields(async (err,values)=>{
             if(!err){
-                message.success(`${userInfo.userName}恭喜你已經通過驗證,密碼為${userInfo.userPwd}`)
+                try {
+                    //const res = await axios.post('/login',userInfo);
+                    this.setState({iconLoading: true})
+                    const res = await Axios.ajax({
+                        url: '/login',
+                        method:'post',
+                        params: userInfo
+                    })
+                    console.log(res);
+                    if(res.items[0].login === 'success'){
+                        message.success(`${userInfo.userName}恭喜你已經通過驗證，正幫您轉入系統中心`);
+                        setTimeout(() => {
+                            this.setState({iconLoading: false})
+                            this.props.history.replace('/admin');
+                        }, 500);
+                    }else{
+                        message.error('登錄失敗');
+                        this.setState({iconLoading: false})
+                        this.props.form.resetFields();
+                    }
+                } catch (error) {
+                    message.error('伺服器錯誤');
+                    this.setState({iconLoading: false})
+                }
+                // message.success(`${userInfo.userName}恭喜你已經通過驗證,密碼為${userInfo.userPwd}`)
             }
         })
     }
@@ -34,7 +64,9 @@ class Login extends React.Component {
                             <Col span='24'>
                                 {/* 預設已經 layout='horizontal' */}
                                 <Form>
-                                    <Form.Item label="用戶名">
+                                    <Form.Item label="用戶名"
+                                        hasFeedback
+                                    >
                                         {
                                             getFieldDecorator('userName',{
                                                 initialValue: '',     /*初始值*/
@@ -59,7 +91,10 @@ class Login extends React.Component {
                                         }
                                         {/* <Input placeholder='請輸入用戶名'/> */}
                                     </Form.Item>
-                                    <Form.Item label="輸入密碼">
+                                    <Form.Item 
+                                        label="輸入密碼"
+                                        hasFeedback
+                                    >
                                         {
                                             getFieldDecorator('userPwd',{
                                                 initialValue: '',  /*初始值*/
@@ -97,7 +132,12 @@ class Login extends React.Component {
                                     </Form.Item>
                                     {/* <h2>123</h2> */}
                                     <Form.Item>
-                                        <Button type='primary' className="login-form-button" onClick={this.handleSubmit}>登錄</Button>
+                                        <Button
+                                            loading={this.state.iconLoading}
+                                            type='primary' 
+                                            className="login-form-button" 
+                                            onClick={this.handleSubmit}
+                                        >登錄</Button>
                                     </Form.Item>
                                 </Form>  
                             </Col>

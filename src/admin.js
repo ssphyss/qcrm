@@ -124,7 +124,10 @@ class Admin extends React.Component{
                 </Layout>
             </Layout>
             ):(
-            <Layout>                           
+            <Layout>  
+                {/* <div id='ajaxLoading' style={{display:'none'}}>
+                    <Spin />
+                </div>                          */}
                 <SiderBar { ...this.state } />
                 <Layout>
                     <Header style={{ background: '#fff', padding: 0 }}>
